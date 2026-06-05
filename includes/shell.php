@@ -1,0 +1,49 @@
+<?php
+/**
+ * Front-end shell helpers for installed workflows.
+ *
+ * @package XPressUI_Bridge
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function xpressui_register_shell_query_var( $vars ) {
+	$vars[] = 'xpressui_shell';
+	return $vars;
+}
+
+function xpressui_maybe_render_shell_page() {
+	$slug = get_query_var( 'xpressui_shell', '' );
+	$slug = sanitize_title( (string) $slug );
+
+	if ( '' === $slug ) {
+		return;
+	}
+
+	$payload = xpressui_get_workflow_shell_payload( $slug );
+	if ( empty( $payload ) ) {
+		status_header( 404 );
+		nocache_headers();
+		header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+		echo '<!doctype html><html><head><meta charset="' . esc_attr( get_bloginfo( 'charset' ) ) . '"><meta name="robots" content="noindex,nofollow"><title>' . esc_html__( 'Workflow not found', 'xpressui-bridge' ) . '</title></head><body><p>' . esc_html__( 'The requested workflow could not be loaded.', 'xpressui-bridge' ) . '</p></body></html>';
+		exit;
+	}
+
+	$compiled_shell_html = xpressui_render_compiled_workflow_shell_html( $slug );
+
+	nocache_headers();
+	header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+
+	if ( '' !== $compiled_shell_html ) {
+		status_header( 200 );
+
+		echo wp_kses( $compiled_shell_html, xpressui_get_shell_allowed_html(), [ 'http', 'https', 'data' ] );
+		exit;
+	}
+
+	status_header( 500 );
+	echo '<!doctype html><html><head><meta charset="' . esc_attr( get_bloginfo( 'charset' ) ) . '"><meta name="robots" content="noindex,nofollow"><title>' . esc_html__( 'Workflow unavailable', 'xpressui-bridge' ) . '</title></head><body><p>' . esc_html__( 'The workflow template could not be rendered. Please reinstall the workflow package.', 'xpressui-bridge' ) . '</p></body></html>';
+	exit;
+}
