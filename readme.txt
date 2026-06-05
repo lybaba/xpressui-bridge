@@ -165,6 +165,8 @@ To rebuild the runtime from those sources:
 == Changelog ==
 
 = 1.0.83 =
+* Remove SVG from the workflow ZIP allowed-extensions list; SVG files can embed JavaScript and are therefore code-like assets not permitted in user-uploaded packages.
+* Remove bundled shortcode-example.php from the document-intake starter workflow to prevent executable code files from being written to the uploads directory on first install.
 * Rebuild the bundled light runtime from the included xpressui-src sources during packaging.
 * Include readable runtime sources in the WordPress.org package while excluding generated dist files and dependency folders.
 
