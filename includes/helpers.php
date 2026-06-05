@@ -399,7 +399,7 @@ function xpressui_get_shell_allowed_html() {
 		'option'   => array_merge( $global_attrs, [ 'value' => true, 'selected' => true, 'disabled' => true ] ),
 		'button'   => array_merge( $global_attrs, [ 'type' => true, 'name' => true, 'value' => true, 'disabled' => true ] ),
 		'a'        => array_merge( $global_attrs, [ 'href' => true, 'target' => true, 'rel' => true ] ),
-		'img'      => array_merge( $global_attrs, [ 'src' => true, 'alt' => true, 'width' => true, 'height' => true, 'loading' => true, 'decoding' => true ] ),
+		'img'      => array_merge( $global_attrs, [ 'src' => true, 'alt' => true, 'width' => true, 'height' => true, 'loading' => true, 'decoding' => true, 'hidden' => true ] ),
 		'svg'      => array_merge( $global_attrs, [ 'xmlns' => true, 'viewBox' => true, 'fill' => true, 'stroke' => true ] ),
 		'path'     => [ 'd' => true, 'fill' => true, 'stroke' => true, 'stroke-width' => true, 'stroke-linecap' => true, 'stroke-linejoin' => true ],
 		'ul'       => $global_attrs,
@@ -412,6 +412,7 @@ function xpressui_get_shell_allowed_html() {
 		'th'       => array_merge( $global_attrs, [ 'scope' => true, 'colspan' => true, 'rowspan' => true ] ),
 		'td'       => array_merge( $global_attrs, [ 'colspan' => true, 'rowspan' => true ] ),
 		'template' => array_merge( $global_attrs, [ 'type' => true ] ),
+		'dialog'   => array_merge( $global_attrs, [ 'open' => true ] ),
 	];
 }
 
