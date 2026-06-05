@@ -70,9 +70,7 @@ async function pollCaptureSession(
 
 function findCaptureDialog(host: TMobileCaptureHost): HTMLDialogElement | null {
   return (
-    host.closest('[data-template-zone="form_frame"]')?.querySelector('[data-mobile-capture-modal]') ??
-    document.querySelector('[data-mobile-capture-modal]') ??
-    null
+    host.closest('[data-template-zone="form_frame"]')?.querySelector('[data-mobile-capture-modal]') ?? null
   ) as HTMLDialogElement | null;
 }
 
@@ -110,6 +108,7 @@ async function openCaptureModal(
   fieldType: string,
   projectSlug: string,
   onData: (data: string) => void,
+  onFallback?: () => void,
 ): Promise<void> {
   const dialog = findCaptureDialog(host);
   if (!dialog) return;
@@ -154,8 +153,8 @@ async function openCaptureModal(
 
   const session = await createCaptureSession(fieldName, fieldType, projectSlug);
   if (!session) {
-    statusText.textContent = 'Could not start capture session.';
-    statusText.style.color = '#ef4444';
+    close();
+    onFallback?.();
     return;
   }
 
@@ -231,8 +230,7 @@ function updateFileInputFiles(fieldWrap: HTMLElement, fn: string, files: File[])
 
 function openLightbox(fieldWrap: HTMLElement, imageUrl: string): void {
   const galleryDialog = (
-    fieldWrap.closest('[data-template-zone="form_frame"]')?.querySelector('[data-product-gallery-modal]') ??
-    document.querySelector('[data-product-gallery-modal]')
+    fieldWrap.closest('[data-template-zone="form_frame"]')?.querySelector('[data-product-gallery-modal]') ?? null
   ) as HTMLDialogElement | null;
   if (!galleryDialog) { window.open(imageUrl, '_blank', 'noopener'); return; }
   const mainImg = galleryDialog.querySelector('[data-product-gallery-main]') as HTMLImageElement | null;
@@ -429,7 +427,11 @@ function initCameraPhotoField(
     if (isList && capturedFiles.length >= maxPhotos) {
       return;
     }
-    void openCaptureModal(host, fn, type, projectSlug, (data) => void handleCapture(data));
+    void openCaptureModal(
+      host, fn, type, projectSlug,
+      (data) => void handleCapture(data),
+      () => openNativeFilePicker(fieldWrap, fn),
+    );
   });
 }
 
